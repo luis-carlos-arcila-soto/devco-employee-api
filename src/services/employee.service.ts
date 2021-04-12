@@ -29,7 +29,7 @@ export default class EmployeeService {
       console.log('Found DynamoDB data');
       return data.Items;
     }).catch(error => {
-      console.log(`==>> Error [queryData] [${error.message}]`);
+      console.log(`==>> Error [ListEmployees] [${error.message}]`);
     });
   }
 
@@ -54,7 +54,7 @@ export default class EmployeeService {
       console.log('Found DynamoDB data');
       return data.Item;
     }).catch(error => {
-      console.log(`==>> Error [queryData] [${error.message}]`);
+      console.log(`==>> Error [OneEmployee] [${error.message}]`);
     });
   }
 
@@ -76,7 +76,7 @@ export default class EmployeeService {
     };
 
     return docClient.delete(params).promise().then((data) => {
-      console.log('Deleted DynamoDB data');
+      console.log('Deleted DynamoDB record');
       return data;
     }).catch(error => {
       console.log(`==>> Error [queryData] [${error.message}]`);
@@ -113,9 +113,9 @@ export default class EmployeeService {
 
     return docClient.put(params).promise().then(() => {
       console.log(`Client with ID [${employeeData.documentId}] inserted`);
-      return { message: `Client with ID [${employeeData.documentId}] inserted` };
+      return { message: `Employee with ID [${employeeData.documentId}] inserted` };
     }).catch(error => {
-      console.log(`==>> Error [insertData] Client with ID [${employeeData.documentId}] [${error.message}]`);
+      console.log(`==>> Error [insertData] Employee with ID [${employeeData.documentId}] [${error.message}]`);
     });
   }
 
@@ -131,7 +131,7 @@ export default class EmployeeService {
       docClient = new DynamoDB.DocumentClient(options);
     }
 
-    console.log("Inserting into Dynamo Table...");
+    console.log("Updating Dynamo Table record...");
 
     const documentId = employeeData.documentId;
     const params = {
@@ -145,9 +145,9 @@ export default class EmployeeService {
 
     return docClient.update(params).promise().then(() => {
       console.log(`Client with ID [${employeeData.documentId}] inserted`);
-      return { message: `Client with ID [${employeeData.documentId}] inserted` };
+      return { message: `Employee with ID [${employeeData.documentId}] inserted` };
     }).catch(error => {
-      console.log(`==>> Error [insertData] Client with ID [${employeeData.documentId}] [${error.message}]`);
+      console.log(`==>> Error [UpdateEmployee] Employee with ID [${employeeData.documentId}] [${error.message}]`);
     });
   }
 }
