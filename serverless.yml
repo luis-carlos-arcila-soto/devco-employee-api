@@ -1,0 +1,91 @@
+service: devco-api
+plugins:
+  - serverless-offline
+  - serverless-plugin-typescript
+  #- serverless-dynamodb-local 
+
+frameworkVersion: '2'
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  region: us-east-2
+  stage: dev
+  lambdaHashingVersion: 20201221
+
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+      Resource:
+        'Fn::GetAtt':
+          - EmployeeTable
+          - Arn
+functions:
+  listEmployees:
+    handler: src/handler.listEmployees
+    events:
+      - http:
+          path: /employees
+          method: get
+    environment:
+      DYNAMO_TABLE: employees-${opt:stage, self:provider.stage}
+  createEmployees:
+    handler: src/handler.createEmployees
+    events:
+      - http:
+          path: /employees
+          method: post
+    environment:
+      DYNAMO_TABLE: employees-${opt:stage, self:provider.stage}
+  updateEmployees:
+    handler: src/handler.updateEmployees
+    events:
+      - http:
+          path: /employees
+          method: put
+    environment:
+      DYNAMO_TABLE: employees-${opt:stage, self:provider.stage}
+  oneEmployee:
+    handler: src/handler.oneEmployee
+    events:
+      - http:
+          path: /employees/{documentId}
+          method: get
+    environment:
+      DYNAMO_TABLE: employees-${opt:stage, self:provider.stage}
+  deleteEmployee:
+    handler: src/handler.deleteEmployee
+    events:
+      - http:
+          path: /employees/{documentId}
+          method: delete
+    environment:
+      DYNAMO_TABLE: employees-${opt:stage, self:provider.stage}
+
+resources:
+  Resources:
+    EmployeeTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: employees-${opt:stage, self:provider.stage}
+        AttributeDefinitions:
+          - AttributeName: documentId
+            AttributeType: N
+        KeySchema:
+          - AttributeName: documentId
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
+custom:
+  dynamodb:
+    stages:
+      - ${self:provider.stage}
+    start:
+      port: 8000
+      inMemory: true
+      migrate: true
+  serverless-offline:    
+    httpPort: 4000

@@ -1,0 +1,14 @@
+# npm dependecies
+/node_modules
+
+# Package Files
+*.jar
+*.war
+*.ear
+
+# Directories
+.vscode
+.dynamodb
+
+# Serverless directories
+.serverless
